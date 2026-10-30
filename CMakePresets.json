@@ -1,0 +1,35 @@
+{
+	"version": 4,
+	"configurePresets": [
+		{
+			"name": "base-preset",
+			"hidden": true,
+			"binaryDir": "${sourceDir}/build/${presetName}",
+			"cacheVariables": {
+				"CMAKE_TOOLCHAIN_FILE": "$env{VCPKG_ROOT}/scripts/buildsystems/vcpkg.cmake"
+			}
+		},
+		{
+			"name": "debug-preset",
+			"inherits": "base-preset",
+			"cacheVariables": { "CMAKE_BUILD_TYPE": "Debug" }
+		},
+		{
+			"name": "debug-release",
+			"inherits": "base-preset",
+			"cacheVariables": { "CMAKE_BUILD_TYPE": "Release" }
+		}
+	],
+	"buildPresets": [
+		{
+			"name": "debug-build",
+			"configurePreset": "debug-preset",
+			"jobs": 8
+		},
+		{
+			"name": "release-build",
+			"configurePreset": "release-preset",
+			"jobs": 8
+		}
+	]
+}
