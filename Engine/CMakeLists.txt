@@ -9,6 +9,10 @@ target_sources(Jora
 	PRIVATE
 		InitialEngine.cpp
 		Source/Graphics/Context.cpp
+		Source/Core/ExpectError.cpp
+		Source/Graphics/DefaultVulkan.cpp
+		Source/Graphics/Window.cpp
+		Source/Core/Logger.cpp
 )
 
 target_include_directories(Jora
@@ -23,3 +27,5 @@ target_link_libraries(Jora
 		glfw
 		volk::volk
 )
+
+target_compile_features(Jora PRIVATE cxx_std_23)
