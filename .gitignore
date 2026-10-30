@@ -42,6 +42,14 @@
 build/
 Build/
 build-*/
+_deps/
+out/
+bin/
+lib/
+x64/
+x86/
+Debug/
+Release/
 
 # CMake generated files
 CMakeFiles/
@@ -56,6 +64,7 @@ compile_commands.json
 *.log
 *.bak
 *.swp
+*.swo
 
 # vcpkg
 vcpkg_installed/
@@ -66,3 +75,78 @@ vcpkg_installed/
 # test output & cache
 Testing/
 .cache/
+*.gcno
+*.gcda
+*.gcov
+
+# Local user files
+CMakeUserPresets.txt
+RAW_SPACE.md
+
+# CUDA intermediate compilation files
+*.i
+*.ii
+*.gpu
+*.ptx
+*.cubin
+*.fatbin
+
+# IDE and editors (Visual Studio, VS Code, Nsight, CLion)
+.vs/
+*.suo
+*.user
+*.userosscache
+*.sln.docstates
+ipch/
+*.opensdf
+*.sdf
+*.cache
+*.lock
+.vscode/
+!.vscode/settings.json
+!.vscode/tasks.json
+!.vscode/launch.json
+!.vscode/extensions.json
+*/*.code-workspace
+.idea/
+*.iml
+*.iws
+*.ipr
+*.vcxproj.user
+NsightEclipse.xml
+.project
+.cproject
+.settings/
+.metadata/
+nbproject/
+*~
+#*#
+.#*
+
+# Windows
+Thumbs.db
+ehthumbs.db
+Desktop.ini
+$RECYCLE.BIN/
+*.cab
+*.msi
+*.msix
+*.msm
+*.msp
+*.lnk
+
+# macOS
+.DS_Store
+.AppleDouble
+.LSOverride
+Icon?
+._*
+.Spotlight-V105
+.Trashes
+
+# Linux
+*~
+.fuse_hidden*
+.directory
+.Trash-*
+.nfs*
