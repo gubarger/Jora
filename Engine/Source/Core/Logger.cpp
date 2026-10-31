@@ -26,4 +26,17 @@ namespace jora
 		std::print(ostream, "[Jora Engine]\t-- {}: {}\n", strType, message);
 	}
 
+	std::string MessageLogging::ConstructMessage(const std::initializer_list<std::string_view> messages)
+	{
+		std::string result;
+
+		result.reserve(messages.size());
+
+		for (auto message : messages)
+		{
+			result += message;
+		}
+
+		return result;
+	}
 }

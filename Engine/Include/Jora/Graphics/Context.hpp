@@ -2,8 +2,6 @@
 
 #include <Jora/Graphics/DefaultVulkan.hpp>
 
-#include <optional>
-
 struct GLFWwindow;
 
 namespace jora
@@ -26,9 +24,15 @@ namespace jora
 
 		struct Queues
 		{
-			std::optional<vkb::QueueType> graphics = std::nullopt;
-			std::optional<vkb::QueueType> present = std::nullopt;
+			VkQueue graphics = nullptr;
+			VkQueue present = nullptr;
+
+			uint32_t graphicsFamily = 0;
+			uint32_t presentFamily = 0;
 		} queues;
+
+		std::vector<VkImage> vkImages;
+		std::vector<VkImageView> vkImageViews;
 
 		/**
 		 * @brief Инициализация основных хендлов.

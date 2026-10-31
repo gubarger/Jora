@@ -45,7 +45,8 @@ namespace jora
 		 * @param type Тип выводимого сообщения.
 		 */
 
-		static void Message(const std::string_view message, const MessageType type = MessageType::Default);
+		static void Message(const std::string_view message, const MessageType type);
+		static 	std::string ConstructMessage(const std::initializer_list<std::string_view> messages);
 	};
 
 }

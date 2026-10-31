@@ -8,12 +8,21 @@ int main() {
 
 	jora::MessageLogging::Message("Launch engine.", jora::MessageType::Default);
 
-	if (!window.CreateWindow() && context.Init(window.GetWindow()) != vk::Result::eSuccess)
+	if (const auto windowResult = window.CreateWindow(); !windowResult)
 	{
 		jora::MessageLogging::Message(
 			"An error occurred during initialization. Terminating with an error."
 			, jora::MessageType::Error);
-		return 1;
+		return windowResult;
+	}
+
+	if (const auto contextResult = context.Init(window.GetWindow()); contextResult != vk::Result::eSuccess)
+	{
+		jora::MessageLogging::Message(
+			"An error occurred during initialization. Terminating with an error."
+			, jora::MessageType::Error);
+
+		return static_cast<VkResult>(contextResult);
 	}
 
 	while (!window.WindowCloseCheck())

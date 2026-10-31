@@ -27,6 +27,9 @@ namespace jora
 
 	Context::~Context()
 	{
+		vkbSwapchain.destroy_image_views(vkImageViews);
+		MessageLogging::Message("Destroy VkSwapchainKHR image views from memory.", MessageType::Success);
+
 		if (vkbSwapchain.swapchain != nullptr)
 		{
 			vkb::destroy_swapchain(vkbSwapchain);
@@ -56,6 +59,7 @@ namespace jora
 	{
 		if (volkInitialize() != VK_SUCCESS)
 		{
+			MessageLogging::Message("Failed initialize Volk.", MessageType::Error);
 			return vk::Result::eErrorInitializationFailed;
 		}
 
@@ -72,6 +76,7 @@ namespace jora
 			.build();
 		if (!instanceResult)
 		{
+			MessageLogging::Message("Failed create VkInstance.", MessageType::Error);
 			return static_cast<vk::Result>(instanceResult.vk_result());
 		}
 
@@ -80,10 +85,10 @@ namespace jora
 		volkLoadInstance(vkbInstance.instance);
 		VULKAN_HPP_DEFAULT_DISPATCHER.init(static_cast<vk::Instance>(vkbInstance.instance));
 
-		if (const auto surfaceResult = CreateWindowSurface(vkbInstance.instance, window, vkSurface);
-			surfaceResult != vk::Result::eSuccess)
+		if (CreateWindowSurface(vkbInstance.instance, window, vkSurface) != vk::Result::eSuccess)
 		{
-			return surfaceResult;
+			MessageLogging::Message("Failed create VkSurface.", MessageType::Error);
+			return vk::Result::eErrorInitializationFailed;
 		}
 
 		VkPhysicalDeviceVulkan13Features features13 = {
@@ -99,12 +104,14 @@ namespace jora
 			.select();
 		if (!physicalDevice)
 		{
+			MessageLogging::Message("Failed select current GPU.", MessageType::Error);
 			return static_cast<vk::Result>(physicalDevice.vk_result());
 		}
 
 		const auto deviceResult = vkb::DeviceBuilder{ physicalDevice.value() }.build();
 		if (!deviceResult)
 		{
+			MessageLogging::Message("Failed create VkDevice.", MessageType::Error);
 			return static_cast<vk::Result>(deviceResult.vk_result());
 		}
 
@@ -112,6 +119,76 @@ namespace jora
 
 		volkLoadDevice(vkbDevice.device);
 		VULKAN_HPP_DEFAULT_DISPATCHER.init(static_cast<vk::Device>(vkbDevice.device));
+
+		const auto swapchainResult = vkb::SwapchainBuilder{ vkbDevice }
+			.set_desired_min_image_count(2)
+			.set_desired_present_mode(VK_PRESENT_MODE_FIFO_KHR)
+			.build();
+		if (!swapchainResult)
+		{
+			MessageLogging::Message("Failed create VkSwapchainKHR.", MessageType::Error);
+			return static_cast<vk::Result>(swapchainResult.vk_result());
+		}
+
+		vkbSwapchain = swapchainResult.value();
+
+		MessageLogging::Message(MessageLogging::ConstructMessage(
+			{ "Swapchain image count = ", std::to_string(vkbSwapchain.image_count) })
+			, MessageType::Default);
+
+		const auto imagesResult = vkbSwapchain.get_images();
+		if (!imagesResult)
+		{
+			MessageLogging::Message("Failed get raw images from VkSwapchainKHR.", MessageType::Error);
+			return static_cast<vk::Result>(imagesResult.vk_result());
+		}
+
+		vkImages = imagesResult.value();
+
+		const auto imageViewsResult = vkbSwapchain.get_image_views();
+		if (!imageViewsResult)
+		{
+			MessageLogging::Message("Failed get image views from VkSwapchainKHR.", MessageType::Error);
+			return static_cast<vk::Result>(imageViewsResult.vk_result());
+		}
+
+		vkImageViews = imageViewsResult.value();
+
+		const auto graphicsQueueResult = vkbDevice.get_queue(vkb::QueueType::graphics);
+		if (!graphicsQueueResult)
+		{
+			MessageLogging::Message("Failed get graphics queue from VkDevice (GPU).", MessageType::Error);
+			return static_cast<vk::Result>(graphicsQueueResult.vk_result());
+		}
+
+		queues.graphics = graphicsQueueResult.value();
+
+		const auto graphicsFamilyResult = vkbDevice.get_queue_index(vkb::QueueType::graphics);
+		if (!graphicsFamilyResult)
+		{
+			MessageLogging::Message("Failed get graphics queue family from VkDevice (GPU).", MessageType::Error);
+			return static_cast<vk::Result>(graphicsFamilyResult.vk_result());
+		}
+
+		queues.graphicsFamily = graphicsFamilyResult.value();
+
+		const auto presentQueueResult = vkbDevice.get_queue(vkb::QueueType::present);
+		if (!presentQueueResult)
+		{
+			MessageLogging::Message("Failed get present queue from VkDevice (GPU).", MessageType::Error);
+			return static_cast<vk::Result>(presentQueueResult.vk_result());
+		}
+
+		queues.present = presentQueueResult.value();
+
+		const auto presentFamilyResult = vkbDevice.get_queue_index(vkb::QueueType::present);
+		if (!presentFamilyResult)
+		{
+			MessageLogging::Message("Failed get present queue family from VkDevice (GPU).", MessageType::Error);
+			return static_cast<vk::Result>(presentFamilyResult.vk_result());
+		}
+
+		queues.presentFamily = presentFamilyResult.value();
 
 		return vk::Result::eSuccess;
 	}
