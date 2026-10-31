@@ -5,7 +5,7 @@ int main() {
 	jora::Window window;
 	jora::Context context;
 
-	if (!window.CreateWindow() && context.Init() != vk::Result::eSuccess)
+	if (!window.CreateWindow() && context.Init(window.GetWindow()) != vk::Result::eSuccess)
 	{
 		return 1;
 	}
