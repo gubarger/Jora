@@ -9,7 +9,6 @@ target_sources(Jora
 	PRIVATE
 		InitialEngine.cpp
 		Source/Graphics/Context.cpp
-		Source/Core/ExpectError.cpp
 		Source/Graphics/DefaultVulkan.cpp
 		Source/Graphics/Window.cpp
 		Source/Core/Logger.cpp

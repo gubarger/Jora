@@ -2,6 +2,8 @@
 
 #include <Jora/Graphics/Window.hpp>
 
+#include <Jora/Core/Logger.hpp>
+
 #include <GLFW/glfw3.h>
 
 namespace
@@ -28,21 +30,25 @@ namespace jora
 		if (vkbSwapchain.swapchain != nullptr)
 		{
 			vkb::destroy_swapchain(vkbSwapchain);
+			MessageLogging::Message("Destroy VkSwapchainKHR from memory.", MessageType::Success);
 		}
 
 		if (vkbDevice.device != nullptr)
 		{
 			vkb::destroy_device(vkbDevice);
+			MessageLogging::Message("Destroy VkDevice from memory.", MessageType::Success);
 		}
 
 		if (vkSurface != nullptr)
 		{
 			vkb::destroy_surface(vkbInstance, vkSurface);
+			MessageLogging::Message("Destroy VkSurface from memory.", MessageType::Success);
 		}
 
 		if (vkbInstance.instance != nullptr)
 		{
 			vkb::destroy_instance(vkbInstance);
+			MessageLogging::Message("Destroy VkInstance from memory.", MessageType::Success);
 		}
 	}
 

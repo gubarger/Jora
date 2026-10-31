@@ -1,5 +1,7 @@
 #pragma once
 
+#include <Jora/Core/Logger.hpp>
+
 #include <expected>
 
 namespace jora
@@ -44,15 +46,17 @@ namespace jora
 		* @brief Выводит информацию о статусе и проверяет.
 		*/
 
-		inline void ViewStatus() const noexcept
+		inline constexpr bool ViewStatus() const noexcept
 		{
 			if (expection_.has_value())
 			{
-
+				MessageLogging::QuickMessage("Values ​​are present.");
+				return true;
 			}
 			else
 			{
-
+				MessageLogging::QuickMessage("Values ​​are missing, or an error has occurred.");
+				return false;
 			}
 		}
 

@@ -13,6 +13,8 @@ namespace jora
 	class Window {
 	public:
 
+		~Window();
+
 		/**
 		 * @brief Создание GLFWwindow.
 		 * @return int32_t код (из GLFW).
