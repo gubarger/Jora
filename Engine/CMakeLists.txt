@@ -21,6 +21,7 @@ target_include_directories(Jora
 
 target_link_libraries(Jora
 	PRIVATE
+		$<$<CONFIG:Debug>:JoraWarnings>
 		Vulkan::Vulkan
 		vk-bootstrap::vk-bootstrap
 		glfw

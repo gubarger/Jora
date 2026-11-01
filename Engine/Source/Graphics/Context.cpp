@@ -10,6 +10,41 @@ namespace
 {
 
 	/**
+	 * @brief Глобальный вывод Vulkan Validation Layers
+	 * @param messageSeverity Уровень сообщения.
+	 * @param messageType Тип сообщения.
+	 * @param pCallbackData Возвращаемые данные для вывода.
+	 * @param pUserData Сохраняемые параметры для пользователя ***(не используется)***.
+	 * @return VK_FALSE (0U)
+	 */
+
+	static VKAPI_ATTR VkBool32 VKAPI_CALL VulkanDebugCallback(
+		VkDebugUtilsMessageSeverityFlagBitsEXT messageSeverity,
+		VkDebugUtilsMessageTypeFlagsEXT messageType,
+		const VkDebugUtilsMessengerCallbackDataEXT* pCallbackData,
+		void* pUserData)
+	{
+		if (messageSeverity == VK_DEBUG_UTILS_MESSAGE_SEVERITY_ERROR_BIT_EXT)
+		{
+			jora::Message(jora::ConstructMessage(
+				{ "Vulkan (Validation Layer)\t", pCallbackData->pMessage })
+				, jora::MessageType::Error);
+		}
+		else if (messageSeverity == VK_DEBUG_UTILS_MESSAGE_SEVERITY_WARNING_BIT_EXT) {
+			jora::Message(jora::ConstructMessage(
+				{ "Vulkan (Validation Layer)\t", pCallbackData->pMessage })
+				, jora::MessageType::Warning);
+		}
+		else {
+			jora::Message(jora::ConstructMessage(
+				{ "Vulkan (Validation Layer)\t", pCallbackData->pMessage })
+				, jora::MessageType::Default);
+		}
+
+		return VK_FALSE;
+	}
+
+	/**
 	 * @brief Создает через функцию библиотеки GLFW VkSurface.
 	 * @param window Созданное окно.
 	 * @return Результат выполнения glfwCreateWindowSurface(...)
@@ -75,6 +110,7 @@ namespace jora
 			.enable_validation_layers()
 			.require_api_version(1, 3, 0)
 			.use_default_debug_messenger()
+			.set_debug_callback(VulkanDebugCallback)
 			.enable_extensions(extCount, extStr)
 			.build();
 		if (!instanceResult)
