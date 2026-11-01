@@ -4,19 +4,6 @@
 #include <iostream>
 #include <cassert>
 
-namespace
-{
-
-	/**
-	 * @brief Обертка над дублирующим кодом для вывода логов.
-	 * @param queue Приоритетная очередь.
-	 */
-
-	void PrintMessage(const std::priority_queue<jora::MessageBox>& queue)
-	{}
-
-}
-
 namespace jora
 {
 	std::pair<std::ostream&, std::string_view> MessageTypeToString(const MessageType type)
