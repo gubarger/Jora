@@ -28,19 +28,19 @@ namespace
 		{
 			jora::globalLogger.Message(
 				jora::MessageBox{
-					.message = jora::ConstructMessage({"Vulkan (Validation Layer) \n\t-- Error: \t", pCallbackData->pMessage}),
+					.message = pCallbackData->pMessage,
 					.type = jora::MessageType::Debug });
 		}
 		else if (messageSeverity == VK_DEBUG_UTILS_MESSAGE_SEVERITY_WARNING_BIT_EXT) {
 			jora::globalLogger.Message(
 				jora::MessageBox{
-					.message = jora::ConstructMessage({"Vulkan (Validation Layer) \n\t-- Warning: \t", pCallbackData->pMessage}),
+					.message = pCallbackData->pMessage,
 					.type = jora::MessageType::Debug });
 		}
 		else {
 			jora::globalLogger.Message(
 				jora::MessageBox{
-					.message = jora::ConstructMessage({"Vulkan (Validation Layer) \n\t-- Info: \t", pCallbackData->pMessage}),
+					.message = pCallbackData->pMessage,
 					.type = jora::MessageType::Debug });
 		}
 

@@ -5,6 +5,8 @@ find_package(volk CONFIG REQUIRED)
 
 add_executable(Jora)
 
+target_precompile_headers(Jora PRIVATE Include/Jora/Graphics/DefaultVulkan.hpp)
+
 target_sources(Jora
 	PRIVATE
 		InitialEngine.cpp

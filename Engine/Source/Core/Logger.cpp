@@ -23,10 +23,9 @@ namespace jora
 	{
 		AddMessageInQueue(messageInfo);
 
-		const auto& currentMessage = queue_.top();
-		const auto currentTypeInfo = jora::MessageTypeToString(currentMessage.type.value());
+		const auto currentTypeInfo = jora::MessageTypeToString(messageInfo.type.value());
 		std::print(currentTypeInfo.first
-			, "[Jora Engine]\t-- {}: {}\n", currentTypeInfo.second, currentMessage.message.value());
+			, "[Jora Engine]\t-- {}: {}\n", currentTypeInfo.second, messageInfo.message.value());
 	}
 
 	std::string ConstructMessage(const std::initializer_list<std::string_view> messages)
