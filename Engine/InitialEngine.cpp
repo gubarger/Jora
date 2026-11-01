@@ -6,22 +6,26 @@ int main() {
 	jora::Window window;
 	jora::Context context;
 
-	jora::Message("Launch engine.", jora::MessageType::Default);
+	jora::globalLogger.Message(
+		jora::MessageBox{
+			.message = "Launch engine!",
+			.type = jora::MessageType::Debug });
 
 	if (const auto windowResult = window.CreateWindow(); !windowResult)
 	{
-		jora::Message(
-			"An error occurred during initialization. Window create error."
-			, jora::MessageType::Error);
+		jora::globalLogger.Message(
+			jora::MessageBox{
+				.message = "Failed create window!",
+				.type = jora::MessageType::Highest });
 		return windowResult;
 	}
 
 	if (const auto contextResult = context.Init(window.GetWindow()); contextResult != vk::Result::eSuccess)
 	{
-		jora::Message(
-			"An error occurred during initialization. Vulkan context create error."
-			, jora::MessageType::Error);
-
+		jora::globalLogger.Message(
+			jora::MessageBox{
+				.message = "Failed create window!",
+				.type = jora::MessageType::Highest });
 		return static_cast<VkResult>(contextResult);
 	}
 
@@ -30,7 +34,10 @@ int main() {
 		jora::HandlingEvens();
 	}
 
-	jora::Message("Shutting down engine.", jora::MessageType::Default);
+	jora::globalLogger.Message(
+		jora::MessageBox{
+			.message = "Shutting down engine!",
+			.type = jora::MessageType::Debug });
 
 	return 0;
 }

@@ -4,26 +4,42 @@
 #include <iostream>
 #include <cassert>
 
+namespace
+{
+
+	/**
+	 * @brief Обертка над дублирующим кодом для вывода логов.
+	 * @param queue Приоритетная очередь.
+	 */
+
+	void PrintMessage(const std::priority_queue<jora::MessageBox>& queue)
+	{}
+
+}
+
 namespace jora
 {
 	std::pair<std::ostream&, std::string_view> MessageTypeToString(const MessageType type)
 	{
 		switch (type)
 		{
-		case MessageType::Default:	return { std::cout, "Default" };
-		case MessageType::Success:	return { std::cout, "Success" };
-		case MessageType::Error:	return { std::cerr, "Error" };
-		case MessageType::Warning:	return { std::cerr, "Warning" };
+		case MessageType::Average:	return { std::cout, "Average" };
+		case MessageType::Debug:	return { std::cout, "Debug" };
+		case MessageType::Default:	return { std::cerr, "Default" };
+		case MessageType::Highest:	return { std::cerr, "Highest" };
 
 		default: return { std::cerr, "Unknown" };
 		}
 	}
 
-	void Message(const std::string_view message, const MessageType type)
+	void MessageSplittingManager::Message(const MessageBox messageInfo)
 	{
-		const auto [ostream, strType] = MessageTypeToString(type);
+		AddMessageInQueue(messageInfo);
 
-		std::print(ostream, "[Jora Engine]\t-- {}: {}\n", strType, message);
+		const auto& currentMessage = queue_.top();
+		const auto currentTypeInfo = jora::MessageTypeToString(currentMessage.type.value());
+		std::print(currentTypeInfo.first
+			, "[Jora Engine]\t-- {}: {}\n", currentTypeInfo.second, currentMessage.message.value());
 	}
 
 	std::string ConstructMessage(const std::initializer_list<std::string_view> messages)

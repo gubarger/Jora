@@ -26,19 +26,22 @@ namespace
 	{
 		if (messageSeverity == VK_DEBUG_UTILS_MESSAGE_SEVERITY_ERROR_BIT_EXT)
 		{
-			jora::Message(jora::ConstructMessage(
-				{ "Vulkan (Validation Layer)\t", pCallbackData->pMessage })
-				, jora::MessageType::Error);
+			jora::globalLogger.Message(
+				jora::MessageBox{
+					.message = jora::ConstructMessage({"Vulkan (Validation Layer) \n\t-- Error: \t", pCallbackData->pMessage}),
+					.type = jora::MessageType::Debug });
 		}
 		else if (messageSeverity == VK_DEBUG_UTILS_MESSAGE_SEVERITY_WARNING_BIT_EXT) {
-			jora::Message(jora::ConstructMessage(
-				{ "Vulkan (Validation Layer)\t", pCallbackData->pMessage })
-				, jora::MessageType::Warning);
+			jora::globalLogger.Message(
+				jora::MessageBox{
+					.message = jora::ConstructMessage({"Vulkan (Validation Layer) \n\t-- Warning: \t", pCallbackData->pMessage}),
+					.type = jora::MessageType::Debug });
 		}
 		else {
-			jora::Message(jora::ConstructMessage(
-				{ "Vulkan (Validation Layer)\t", pCallbackData->pMessage })
-				, jora::MessageType::Default);
+			jora::globalLogger.Message(
+				jora::MessageBox{
+					.message = jora::ConstructMessage({"Vulkan (Validation Layer) \n\t-- Info: \t", pCallbackData->pMessage}),
+					.type = jora::MessageType::Debug });
 		}
 
 		return VK_FALSE;
@@ -65,31 +68,46 @@ namespace jora
 		if (!vkImageViews.empty())
 		{
 			vkbSwapchain.destroy_image_views(vkImageViews);
-			Message("Destroy VkSwapchainKHR image views from memory.", MessageType::Success);
+			jora::globalLogger.Message(
+				jora::MessageBox{
+					.message = "VkImageViews destroyed success!",
+					.type = jora::MessageType::Debug });
 		}
 
 		if (vkbSwapchain.swapchain != nullptr)
 		{
 			vkb::destroy_swapchain(vkbSwapchain);
-			Message("Destroy VkSwapchainKHR from memory.", MessageType::Success);
+			jora::globalLogger.Message(
+				jora::MessageBox{
+					.message = "VkSwapchainKHR destroyed success!",
+					.type = jora::MessageType::Debug });
 		}
 
 		if (vkbDevice.device != nullptr)
 		{
 			vkb::destroy_device(vkbDevice);
-			Message("Destroy VkDevice from memory.", MessageType::Success);
+			jora::globalLogger.Message(
+				jora::MessageBox{
+					.message = "VkDevice destroyed success!",
+					.type = jora::MessageType::Debug });
 		}
 
 		if (vkSurface != nullptr)
 		{
 			vkb::destroy_surface(vkbInstance, vkSurface);
-			Message("Destroy VkSurface from memory.", MessageType::Success);
+			jora::globalLogger.Message(
+				jora::MessageBox{
+					.message = "VkSurfaceKHR destroyed success!",
+					.type = jora::MessageType::Debug });
 		}
 
 		if (vkbInstance.instance != nullptr)
 		{
 			vkb::destroy_instance(vkbInstance);
-			Message("Destroy VkInstance from memory.", MessageType::Success);
+			jora::globalLogger.Message(
+				jora::MessageBox{
+					.message = "VkInstance destroyed success!",
+					.type = jora::MessageType::Debug });
 		}
 	}
 
@@ -97,7 +115,10 @@ namespace jora
 	{
 		if (volkInitialize() != VK_SUCCESS)
 		{
-			Message("Failed initialize Volk.", MessageType::Error);
+			jora::globalLogger.Message(
+				jora::MessageBox{
+					.message = "Error init Volk!",
+					.type = jora::MessageType::Highest });
 			return vk::Result::eErrorInitializationFailed;
 		}
 
@@ -115,7 +136,10 @@ namespace jora
 			.build();
 		if (!instanceResult)
 		{
-			Message("Failed create VkInstance.", MessageType::Error);
+			jora::globalLogger.Message(
+				jora::MessageBox{
+					.message = "Error create VkInstance!",
+					.type = jora::MessageType::Highest });
 			return static_cast<vk::Result>(instanceResult.vk_result());
 		}
 
@@ -126,7 +150,10 @@ namespace jora
 
 		if (CreateWindowSurface(vkbInstance.instance, window, vkSurface) != vk::Result::eSuccess)
 		{
-			Message("Failed create VkSurface.", MessageType::Error);
+			jora::globalLogger.Message(
+				jora::MessageBox{
+					.message = "Error create VkSurfaceKHR!",
+					.type = jora::MessageType::Highest });
 			return vk::Result::eErrorInitializationFailed;
 		}
 
@@ -143,14 +170,20 @@ namespace jora
 			.select();
 		if (!physicalDevice)
 		{
-			Message("Failed select current GPU.", MessageType::Error);
+			jora::globalLogger.Message(
+				jora::MessageBox{
+					.message = "Failed to get or select current GPU!",
+					.type = jora::MessageType::Highest });
 			return static_cast<vk::Result>(physicalDevice.vk_result());
 		}
 
 		const auto deviceResult = vkb::DeviceBuilder{ physicalDevice.value() }.build();
 		if (!deviceResult)
 		{
-			Message("Failed create VkDevice.", MessageType::Error);
+			jora::globalLogger.Message(
+				jora::MessageBox{
+					.message = "Error create VkDevice!",
+					.type = jora::MessageType::Highest });
 			return static_cast<vk::Result>(deviceResult.vk_result());
 		}
 
@@ -165,20 +198,24 @@ namespace jora
 			.build();
 		if (!swapchainResult)
 		{
-			Message("Failed create VkSwapchainKHR.", MessageType::Error);
+			jora::globalLogger.Message(
+				jora::MessageBox{
+					.message = "Error create VkSwapchainKHR!",
+					.type = jora::MessageType::Highest });
 			return static_cast<vk::Result>(swapchainResult.vk_result());
 		}
 
 		vkbSwapchain = swapchainResult.value();
 
-		Message(ConstructMessage(
-			{ "Swapchain image count = ", std::to_string(vkbSwapchain.image_count) })
-			, MessageType::Default);
+
 
 		const auto imagesResult = vkbSwapchain.get_images();
 		if (!imagesResult)
 		{
-			Message("Failed get raw images from VkSwapchainKHR.", MessageType::Error);
+			jora::globalLogger.Message(
+				jora::MessageBox{
+					.message = "Failed to get VkImage!",
+					.type = jora::MessageType::Highest });
 			return static_cast<vk::Result>(imagesResult.vk_result());
 		}
 
@@ -187,7 +224,10 @@ namespace jora
 		const auto imageViewsResult = vkbSwapchain.get_image_views();
 		if (!imageViewsResult)
 		{
-			Message("Failed get image views from VkSwapchainKHR.", MessageType::Error);
+			jora::globalLogger.Message(
+				jora::MessageBox{
+					.message = "Failed to get VkImageViews!",
+					.type = jora::MessageType::Highest });
 			return static_cast<vk::Result>(imageViewsResult.vk_result());
 		}
 
@@ -196,7 +236,10 @@ namespace jora
 		const auto graphicsQueueResult = vkbDevice.get_queue(vkb::QueueType::graphics);
 		if (!graphicsQueueResult)
 		{
-			Message("Failed get graphics queue from VkDevice (GPU).", MessageType::Error);
+			jora::globalLogger.Message(
+				jora::MessageBox{
+					.message = "Failed to get queue for graphics queues!",
+					.type = jora::MessageType::Highest });
 			return static_cast<vk::Result>(graphicsQueueResult.vk_result());
 		}
 
@@ -205,7 +248,10 @@ namespace jora
 		const auto graphicsFamilyResult = vkbDevice.get_queue_index(vkb::QueueType::graphics);
 		if (!graphicsFamilyResult)
 		{
-			Message("Failed get graphics queue family from VkDevice (GPU).", MessageType::Error);
+			jora::globalLogger.Message(
+				jora::MessageBox{
+					.message = "Failed to get queue family for graphics queues!",
+					.type = jora::MessageType::Highest });
 			return static_cast<vk::Result>(graphicsFamilyResult.vk_result());
 		}
 
@@ -214,7 +260,10 @@ namespace jora
 		const auto presentQueueResult = vkbDevice.get_queue(vkb::QueueType::present);
 		if (!presentQueueResult)
 		{
-			Message("Failed get present queue from VkDevice (GPU).", MessageType::Error);
+			jora::globalLogger.Message(
+				jora::MessageBox{
+					.message = "Failed to get queue for present queues!",
+					.type = jora::MessageType::Highest });
 			return static_cast<vk::Result>(presentQueueResult.vk_result());
 		}
 
@@ -223,7 +272,10 @@ namespace jora
 		const auto presentFamilyResult = vkbDevice.get_queue_index(vkb::QueueType::present);
 		if (!presentFamilyResult)
 		{
-			Message("Failed get present queue family from VkDevice (GPU).", MessageType::Error);
+			jora::globalLogger.Message(
+				jora::MessageBox{
+					.message = "Failed to get queue family for present queues!",
+					.type = jora::MessageType::Highest });
 			return static_cast<vk::Result>(presentFamilyResult.vk_result());
 		}
 

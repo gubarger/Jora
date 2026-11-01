@@ -16,20 +16,29 @@ namespace jora
 
 		glfwTerminate();
 
-		Message("Destroy Window and GLFW from memory.", MessageType::Success);
+		jora::globalLogger.Message(
+			jora::MessageBox{
+				.message = "Destroy the window and GLFW library!",
+				.type = jora::MessageType::Debug });
 	}
 
 	int32_t Window::CreateWindow()
 	{
 		if (!glfwInit())
 		{
-			Message("Failed to initialize GLFW.", MessageType::Error);
+			jora::globalLogger.Message(
+				jora::MessageBox{
+					.message = "Failed to init GLFW!",
+					.type = jora::MessageType::Highest });
 			return GLFW_FALSE;
 		}
 
 		if (!glfwVulkanSupported())
 		{
-			Message("Vulkan is not supported this desktop.", MessageType::Error);
+			jora::globalLogger.Message(
+				jora::MessageBox{
+					.message = "Vulkan is not supported!",
+					.type = jora::MessageType::Highest });
 			return GLFW_FALSE;
 		}
 
@@ -38,7 +47,10 @@ namespace jora
 		window_ = glfwCreateWindow(1280, 920, "Jora", nullptr, nullptr);
 		if (window_ == nullptr)
 		{
-			Message("Failed to create window OS.", MessageType::Error);
+			jora::globalLogger.Message(
+				jora::MessageBox{
+					.message = "Window is not created (null)!",
+					.type = jora::MessageType::Highest });
 			return GLFW_FALSE;
 		}
 
@@ -49,8 +61,6 @@ namespace jora
 	{
 		return glfwWindowShouldClose(window_);
 	}
-
-	GLFWwindow* Window::GetWindow() const { return window_; }
 
 	std::pair<uint32_t, const char**> GetWindowExtensions()
 	{
