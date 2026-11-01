@@ -19,14 +19,14 @@ namespace jora
 		}
 	}
 
-	void MessageLogging::Message(const std::string_view message, const MessageType type)
+	void Message(const std::string_view message, const MessageType type)
 	{
 		const auto [ostream, strType] = MessageTypeToString(type);
 
 		std::print(ostream, "[Jora Engine]\t-- {}: {}\n", strType, message);
 	}
 
-	std::string MessageLogging::ConstructMessage(const std::initializer_list<std::string_view> messages)
+	std::string ConstructMessage(const std::initializer_list<std::string_view> messages)
 	{
 		std::string result;
 

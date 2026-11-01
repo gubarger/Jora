@@ -6,20 +6,20 @@ int main() {
 	jora::Window window;
 	jora::Context context;
 
-	jora::MessageLogging::Message("Launch engine.", jora::MessageType::Default);
+	jora::Message("Launch engine.", jora::MessageType::Default);
 
 	if (const auto windowResult = window.CreateWindow(); !windowResult)
 	{
-		jora::MessageLogging::Message(
-			"An error occurred during initialization. Terminating with an error."
+		jora::Message(
+			"An error occurred during initialization. Window create error."
 			, jora::MessageType::Error);
 		return windowResult;
 	}
 
 	if (const auto contextResult = context.Init(window.GetWindow()); contextResult != vk::Result::eSuccess)
 	{
-		jora::MessageLogging::Message(
-			"An error occurred during initialization. Terminating with an error."
+		jora::Message(
+			"An error occurred during initialization. Vulkan context create error."
 			, jora::MessageType::Error);
 
 		return static_cast<VkResult>(contextResult);
@@ -30,7 +30,7 @@ int main() {
 		jora::HandlingEvens();
 	}
 
-	jora::MessageLogging::Message("Shutting down engine.", jora::MessageType::Default);
+	jora::Message("Shutting down engine.", jora::MessageType::Default);
 
 	return 0;
 }

@@ -26,27 +26,13 @@ namespace jora
 	std::pair<std::ostream&, std::string_view> MessageTypeToString(const MessageType type);
 
 	/**
-	 * @brief Класс для вывода логирования в консоль и файлы.
+	 * @brief Выводит сообщение с типом лога.
+	 * @param message Выводимое сообщение.
+	 * @param type Тип выводимого сообщения.
 	 */
 
-	class MessageLogging
-	{
-	public:
-		/**
-		 * @brief Удаление операторов копирования (сообщения для логов могут лишь перемещаться).
-		 */
+	void Message(const std::string_view message, const MessageType type);
 
-		MessageLogging(const MessageLogging&) = delete;
-		MessageLogging operator=(const MessageLogging&) = delete;
-
-		/**
-		 * @brief Выводит сообщение с типом лога.
-		 * @param message Выводимое сообщение.
-		 * @param type Тип выводимого сообщения.
-		 */
-
-		static void Message(const std::string_view message, const MessageType type);
-		static 	std::string ConstructMessage(const std::initializer_list<std::string_view> messages);
-	};
+	std::string ConstructMessage(const std::initializer_list<std::string_view> messages);
 
 }

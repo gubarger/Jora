@@ -16,6 +16,14 @@ namespace jora
 
 		VkSurfaceKHR vkSurface = nullptr;
 
+		Context() = default;
+
+		Context(const Context&) = delete;
+		Context& operator=(const Context&) = delete;
+
+		Context(Context&&) noexcept = default;
+		Context& operator=(Context&&) noexcept = default;
+
 		~Context();
 
 		/**

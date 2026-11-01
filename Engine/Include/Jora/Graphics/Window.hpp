@@ -12,6 +12,13 @@ namespace jora
 
 	class Window {
 	public:
+		Window() = default;
+
+		Window(const Window&) = delete;
+		Window& operator=(const Window&) = delete;
+
+		Window(Window&&) noexcept = default;
+		Window& operator=(Window&&) noexcept = default;
 
 		~Window();
 
