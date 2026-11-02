@@ -1,7 +1,7 @@
 #include <Jora/Graphics/Window.hpp>
 #include <Jora/Graphics/Context.hpp>
 #include <Jora/Core/Logger.hpp>
-
+#include <iostream>
 int main() {
 	jora::Window window;
 	jora::Context context;
