@@ -15,30 +15,17 @@ namespace jora
 		}
 
 		glfwTerminate();
-
-		jora::globalLogger.Message(
-			jora::MessageBox{
-				.message = "Destroy the window and GLFW library!",
-				.type = jora::MessageType::Debug });
 	}
 
 	int32_t Window::CreateWindow()
 	{
 		if (!glfwInit())
 		{
-			jora::globalLogger.Message(
-				jora::MessageBox{
-					.message = "Failed to init GLFW!",
-					.type = jora::MessageType::Highest });
 			return GLFW_FALSE;
 		}
 
 		if (!glfwVulkanSupported())
 		{
-			jora::globalLogger.Message(
-				jora::MessageBox{
-					.message = "Vulkan is not supported!",
-					.type = jora::MessageType::Highest });
 			return GLFW_FALSE;
 		}
 
@@ -47,10 +34,6 @@ namespace jora
 		window_ = glfwCreateWindow(1280, 920, "Jora", nullptr, nullptr);
 		if (window_ == nullptr)
 		{
-			jora::globalLogger.Message(
-				jora::MessageBox{
-					.message = "Window is not created (null)!",
-					.type = jora::MessageType::Highest });
 			return GLFW_FALSE;
 		}
 

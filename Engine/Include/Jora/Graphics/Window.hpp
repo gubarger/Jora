@@ -41,7 +41,7 @@ namespace jora
 		 * @return GLFWwindow*
 		 */
 
-		inline GLFWwindow* GetWindow() const { return window_; }
+		constexpr GLFWwindow* GetWindow() const noexcept { return window_; }
 
 	private:
 		GLFWwindow* window_ = nullptr;
