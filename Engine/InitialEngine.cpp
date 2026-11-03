@@ -1,22 +1,32 @@
 #include <Jora/Graphics/Window.hpp>
 #include <Jora/Graphics/Context.hpp>
 #include <Jora/Core/Logger.hpp>
-#include <iostream>
+
 int main() {
 	jora::Window window;
 	jora::Context context;
 
 	if (const auto windowResult = window.CreateWindow(); !windowResult)
 	{
+		jora::DebugMessenger::Print({
+			.message = "Failed to initialize window.",
+			.type = jora::MessageType::Error });
+
+		return windowResult;
 	}
 
-	if (const auto contextResult = context.Init(window.GetWindow()); contextResult != vk::Result::eSuccess)
+	if (context.Init(window.GetWindow()) != vk::Result::eSuccess)
 	{
+		jora::DebugMessenger::Print({
+			.message = "Failed to initialize Vulkan API v1.3",
+			.type = jora::MessageType::Error });
+
+		return static_cast<int>(vk::Result::eErrorInitializationFailed);
 	}
 
 	while (!window.WindowCloseCheck())
 	{
-		jora::HandlingEvens();
+		jora::HandlingWindowEvens();
 	}
 
 	return 0;

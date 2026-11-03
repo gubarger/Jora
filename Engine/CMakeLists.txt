@@ -14,6 +14,7 @@ target_sources(Jora
 		Source/Graphics/DefaultVulkan.cpp
 		Source/Graphics/Window.cpp
 		Source/Core/Logger.cpp
+		Source/Core/ThreadPool.cpp
 )
 
 target_include_directories(Jora

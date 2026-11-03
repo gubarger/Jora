@@ -54,7 +54,7 @@ namespace jora
 		return { count, extensions };
 	}
 
-	void HandlingEvens()
+	void HandlingWindowEvens()
 	{
 		glfwPollEvents();
 	}

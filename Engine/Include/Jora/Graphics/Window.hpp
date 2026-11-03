@@ -58,6 +58,6 @@ namespace jora
 	 * @brief Обработка GLFW events.
 	 */
 
-	void HandlingEvens();
+	void HandlingWindowEvens();
 
 }

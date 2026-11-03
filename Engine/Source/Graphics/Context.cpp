@@ -20,16 +20,19 @@ namespace
 
 	static VKAPI_ATTR VkBool32 VKAPI_CALL VulkanDebugCallback(
 		VkDebugUtilsMessageSeverityFlagBitsEXT messageSeverity,
-		VkDebugUtilsMessageTypeFlagsEXT messageType,
+		[[maybe_unused]] VkDebugUtilsMessageTypeFlagsEXT messageType,
 		const VkDebugUtilsMessengerCallbackDataEXT* pCallbackData,
-		void* pUserData)
+		[[maybe_unused]] void* pUserData)
 	{
 		if (messageSeverity == VK_DEBUG_UTILS_MESSAGE_SEVERITY_ERROR_BIT_EXT)
 		{
+			jora::DebugMessenger::Print({ .message = pCallbackData->pMessage , .type = jora::MessageType::Error });
 		}
 		else if (messageSeverity == VK_DEBUG_UTILS_MESSAGE_SEVERITY_WARNING_BIT_EXT) {
+			jora::DebugMessenger::Print({ .message = pCallbackData->pMessage , .type = jora::MessageType::Warning });
 		}
 		else {
+			jora::DebugMessenger::Print({ .message = pCallbackData->pMessage , .type = jora::MessageType::Info });
 		}
 
 		return VK_FALSE;
@@ -150,8 +153,6 @@ namespace jora
 		}
 
 		vkbSwapchain = swapchainResult.value();
-
-
 
 		const auto imagesResult = vkbSwapchain.get_images();
 		if (!imagesResult)
