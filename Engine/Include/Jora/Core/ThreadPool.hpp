@@ -6,6 +6,7 @@
 #include <vector>
 #include <atomic>
 #include <algorithm>
+#include <latch>
 
 namespace jora
 {
@@ -81,6 +82,14 @@ namespace jora
 
 			return future;
 		}
+
+		/**
+		 * @brief Задача без `std::future`.
+		 * @param priority Приоритет задачи.
+		 * @param task Задача.
+		 */
+
+		void Post(TaskPriority priority, Task task) { Enqueue(priority, std::move(task)); }
 
 	private:
 		/**
