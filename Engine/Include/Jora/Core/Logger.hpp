@@ -71,7 +71,7 @@ namespace jora
 	class NullMessenger
 	{
 	public:
-		constexpr static void Print([[maybe_unused]] const MessageInfo& info) noexcept {}
+		constexpr static void Print([[maybe_unused]] const MessageInfo&) noexcept {}
 
 		constexpr void Say([[maybe_unused]] const MessageInfo&) const noexcept {}
 
