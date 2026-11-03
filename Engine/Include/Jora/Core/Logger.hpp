@@ -223,7 +223,7 @@ namespace jora
 		 * @return Измененный тип хранилища.
 		 */
 
-		Storage* GetHandle() noexcept { return &storage_; }
+		constexpr Storage* GetHandle() noexcept { return &storage_; }
 
 	private:
 		[[no_unique_address]] Storage storage_; //< Хранилище истории для Debug.
