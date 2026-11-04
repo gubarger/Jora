@@ -10,8 +10,9 @@ if (MSVC)
 		/w14242
 		/w14265
 		/w14311
+		$<$<CONFIG:Release>:/O2>
 	)
-else ()
+else () # Clang / GCC
 	target_compile_options(JoraWarnings INTERFACE
 		-Wall
 		-Wextra
@@ -21,6 +22,7 @@ else ()
 		-Wcast-align
 		-Wunused
 		-Woverloaded-virtual
+		$<$<CONFIG:Release>:-msse4.2>
 	)
 endif ()
 

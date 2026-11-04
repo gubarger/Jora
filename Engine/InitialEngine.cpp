@@ -1,5 +1,6 @@
 #include <Jora/Graphics/Window.hpp>
 #include <Jora/Graphics/Context.hpp>
+#include <Jora/Graphics/Renderer.hpp>
 #include <Jora/Core/Logger.hpp>
 
 int main() {
@@ -24,9 +25,19 @@ int main() {
 		return static_cast<int>(vk::Result::eErrorInitializationFailed);
 	}
 
+	jora::Renderer render(context);
+
+	if (render.Init() != vk::Result::eSuccess)
+	{
+		jora::DebugMessenger::Print({ .message = "Failed to init renderer.", .type = jora::MessageType::Error });
+		return static_cast<int>(vk::Result::eErrorInitializationFailed);
+	}
+
 	while (!window.WindowCloseCheck())
 	{
 		jora::HandlingWindowEvens();
+
+		render.Record();
 	}
 
 	return 0;

@@ -1,7 +1,5 @@
 #include <Jora/Graphics/Context.hpp>
-
 #include <Jora/Graphics/Window.hpp>
-
 #include <Jora/Core/Logger.hpp>
 
 #include <GLFW/glfw3.h>
@@ -56,6 +54,23 @@ namespace jora
 
 	Context::~Context()
 	{
+		vkDevice.waitIdle();
+
+		for (auto& fence : inFlights)
+		{
+			vkDevice.destroyFence(fence);
+		}
+
+		for (auto& semaImage : imageAvailables)
+		{
+			vkDevice.destroySemaphore(semaImage);
+		}
+
+		for (auto& semaFinish : renderFinisheds)
+		{
+			vkDevice.destroySemaphore(semaFinish);
+		}
+
 		if (!vkImageViews.empty())
 		{
 			vkbSwapchain.destroy_image_views(vkImageViews);
@@ -140,12 +155,47 @@ namespace jora
 
 		vkbDevice = deviceResult.value();
 
+		vkDevice = vk::Device{ vkbDevice.device };
+
 		volkLoadDevice(vkbDevice.device);
 		VULKAN_HPP_DEFAULT_DISPATCHER.init(static_cast<vk::Device>(vkbDevice.device));
 
+		const auto graphicsQueueResult = vkbDevice.get_queue(vkb::QueueType::graphics);
+		if (!graphicsQueueResult)
+		{
+			return static_cast<vk::Result>(graphicsQueueResult.vk_result());
+		}
+
+		queues.graphics = graphicsQueueResult.value();
+
+		const auto graphicsFamilyResult = vkbDevice.get_queue_index(vkb::QueueType::graphics);
+		if (!graphicsFamilyResult)
+		{
+			return static_cast<vk::Result>(graphicsFamilyResult.vk_result());
+		}
+
+		graphicsFamily = graphicsFamilyResult.value();
+
+		const auto presentQueueResult = vkbDevice.get_queue(vkb::QueueType::present);
+		if (!presentQueueResult)
+		{
+			return static_cast<vk::Result>(presentQueueResult.vk_result());
+		}
+
+		queues.present = presentQueueResult.value();
+
+		const auto presentFamilyResult = vkbDevice.get_queue_index(vkb::QueueType::present);
+		if (!presentFamilyResult)
+		{
+			return static_cast<vk::Result>(presentFamilyResult.vk_result());
+		}
+
+		presentFamily = presentFamilyResult.value();
+
 		const auto swapchainResult = vkb::SwapchainBuilder{ vkbDevice }
-			.set_desired_min_image_count(2)
+			.set_desired_min_image_count(vkImages.size())
 			.set_desired_present_mode(VK_PRESENT_MODE_FIFO_KHR)
+			.add_image_usage_flags(VK_IMAGE_USAGE_TRANSFER_DST_BIT)
 			.build();
 		if (!swapchainResult)
 		{
@@ -153,6 +203,8 @@ namespace jora
 		}
 
 		vkbSwapchain = swapchainResult.value();
+
+		vkSwapchain = vk::SwapchainKHR{ vkbSwapchain.swapchain };
 
 		const auto imagesResult = vkbSwapchain.get_images();
 		if (!imagesResult)
@@ -170,37 +222,47 @@ namespace jora
 
 		vkImageViews = imageViewsResult.value();
 
-		const auto graphicsQueueResult = vkbDevice.get_queue(vkb::QueueType::graphics);
-		if (!graphicsQueueResult)
+		vk::SemaphoreCreateInfo semaphoreInfo{};
+		vk::FenceCreateInfo fenceInfo(vk::FenceCreateFlagBits::eSignaled);
+
+		inFlights.resize(maxFrames);
+		imageAvailables.resize(maxFrames);
+
+		for (uint32_t i = 0; i < maxFrames; ++i)
 		{
-			return static_cast<vk::Result>(graphicsQueueResult.vk_result());
+			auto fenceResult = vkDevice.createFence(fenceInfo);
+
+			if (fenceResult.result != vk::Result::eSuccess)
+			{
+				return fenceResult.result;
+			}
+
+			inFlights[i] = fenceResult.value;
+
+			// Создание imageAvailables. //
+
+			auto semaphoreResult = vkDevice.createSemaphore(semaphoreInfo);
+
+			if (semaphoreResult.result != vk::Result::eSuccess)
+			{
+				return semaphoreResult.result;
+			}
+
+			imageAvailables[i] = semaphoreResult.value;
 		}
 
-		queues.graphics = graphicsQueueResult.value();
-
-		const auto graphicsFamilyResult = vkbDevice.get_queue_index(vkb::QueueType::graphics);
-		if (!graphicsFamilyResult)
+		renderFinisheds.resize(vkImages.size());
+		for (auto& semaphore : renderFinisheds)
 		{
-			return static_cast<vk::Result>(graphicsFamilyResult.vk_result());
+			auto semaphoreResult = vkDevice.createSemaphore(semaphoreInfo);
+
+			if (semaphoreResult.result != vk::Result::eSuccess)
+			{
+				return semaphoreResult.result;
+			}
+
+			semaphore = semaphoreResult.value;
 		}
-
-		queues.graphicsFamily = graphicsFamilyResult.value();
-
-		const auto presentQueueResult = vkbDevice.get_queue(vkb::QueueType::present);
-		if (!presentQueueResult)
-		{
-			return static_cast<vk::Result>(presentQueueResult.vk_result());
-		}
-
-		queues.present = presentQueueResult.value();
-
-		const auto presentFamilyResult = vkbDevice.get_queue_index(vkb::QueueType::present);
-		if (!presentFamilyResult)
-		{
-			return static_cast<vk::Result>(presentFamilyResult.vk_result());
-		}
-
-		queues.presentFamily = presentFamilyResult.value();
 
 		return vk::Result::eSuccess;
 	}

@@ -1,7 +1,5 @@
 #pragma once
 
-#include <Jora/Graphics/DefaultVulkan.hpp>
-
 struct GLFWwindow;
 
 namespace jora
@@ -15,6 +13,9 @@ namespace jora
 		vkb::Swapchain vkbSwapchain;
 
 		VkSurfaceKHR vkSurface = nullptr;
+
+		vk::Device vkDevice = nullptr;
+		vk::SwapchainKHR vkSwapchain = nullptr;
 
 		Context() = default;
 
@@ -34,18 +35,20 @@ namespace jora
 		{
 			VkQueue graphics = nullptr;
 			VkQueue present = nullptr;
-
-			uint32_t graphicsFamily = 0;
-			uint32_t presentFamily = 0;
 		} queues;
+
+		uint32_t graphicsFamily = 0;
+		uint32_t presentFamily = 0;
 
 		std::vector<VkImage> vkImages;
 		std::vector<VkImageView> vkImageViews;
 
-		/**
-		 * @brief Инициализация основных хендлов.
-		 * @return vk::Result код.
-		 */
+		static constexpr uint32_t maxFrames = 2;
+		uint32_t currentFrame = 0;
+
+		std::vector<vk::Fence> inFlights; // maxFrames
+		std::vector<vk::Semaphore> imageAvailables; // maxFrames
+		std::vector<vk::Semaphore> renderFinisheds; // vkImages.size();
 
 		vk::Result Init(GLFWwindow* window) noexcept;
 	};

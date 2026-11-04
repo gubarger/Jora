@@ -4,6 +4,7 @@
     "glfw3",
     "vk-bootstrap",
     "volk",
-    "gtest"
+    "gtest",
+    "glm"
   ]
 }
