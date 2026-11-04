@@ -1,6 +1,7 @@
 #include <Jora/Graphics/Window.hpp>
 #include <Jora/Graphics/Context.hpp>
 #include <Jora/Graphics/Renderer.hpp>
+#include <Jora/Core/Time.hpp>
 #include <Jora/Core/Logger.hpp>
 
 int main() {
@@ -33,11 +34,17 @@ int main() {
 		return static_cast<int>(vk::Result::eErrorInitializationFailed);
 	}
 
+	jora::GlobalTime time;
+
 	while (!window.WindowCloseCheck())
 	{
 		jora::HandlingWindowEvens();
 
+		time.BeginCountFrame();
+
 		render.Record();
+
+		time.EndCountFrame();
 	}
 
 	return 0;

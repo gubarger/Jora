@@ -18,6 +18,7 @@ target_sources(Jora
 		Source/Graphics/Renderer.cpp
 		Source/Core/Logger.cpp
 		Source/Core/ThreadPool.cpp
+		Source/Core/Time.cpp
 )
 
 target_include_directories(Jora
