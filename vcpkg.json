@@ -3,6 +3,7 @@
   "dependencies": [
     "glfw3",
     "vk-bootstrap",
-    "volk"
+    "volk",
+    "gtest"
   ]
 }

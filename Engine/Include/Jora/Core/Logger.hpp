@@ -25,7 +25,9 @@ namespace jora
 		Error = 4,
 		Critical = 5,
 
-		_Null = 0 // Используется лишь для проверки (ести ли значение).
+		_Null = 0 // Используется лишь для проверки (ести ли значение). 
+		// Однако, это не значит, что функция MessageInfo::Empty() 
+		// будет выдавать true при MessageType type = MessageType::_Null
 	};
 
 	/**
@@ -60,7 +62,7 @@ namespace jora
 
 		constexpr const bool Empty() const noexcept
 		{
-			return (static_cast<uint32_t>(type) == 0) && message.empty();
+			return (static_cast<int>(type) == 0) && message.empty();
 		}
 	};
 

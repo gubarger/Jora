@@ -24,4 +24,10 @@ else ()
 	)
 endif ()
 
+option(JORA_ENGINE_TESTS "Build test for Jora engine." OFF)
+
 add_subdirectory(Engine)
+
+if (JORA_ENGINE_TESTS)
+	add_subdirectory(Tests)
+endif ()
