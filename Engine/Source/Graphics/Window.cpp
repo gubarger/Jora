@@ -1,5 +1,4 @@
 #include <Jora/Graphics/Window.hpp>
-
 #include <Jora/Core/Logger.hpp>
 
 #include <GLFW/glfw3.h>

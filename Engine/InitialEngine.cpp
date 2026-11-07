@@ -1,8 +1,8 @@
 #include <Jora/Graphics/Window.hpp>
 #include <Jora/Graphics/Context.hpp>
 #include <Jora/Graphics/Renderer.hpp>
-#include <Jora/Core/Time.hpp>
 #include <Jora/Core/Logger.hpp>
+#include <Jora/Core/Time.hpp>
 
 int main() {
 	jora::Window window;
@@ -35,7 +35,8 @@ int main() {
 	}
 
 	jora::Time time;
-	time.Reset();
+
+	time.Reset(); // Первые кадры делаются позже, поэтому тут сброс перед циклом.
 
 	while (!window.WindowCloseCheck())
 	{
