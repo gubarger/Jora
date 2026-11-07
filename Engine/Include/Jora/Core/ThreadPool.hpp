@@ -63,14 +63,14 @@ namespace jora
 		 * @return Объект ассинхронно выполненной операции (`std::future`).
 		 */
 
-		template<class _Func, class... _Args>
-		[[nodiscard]] auto Sumbit(TaskPriority priority, _Func&& func, _Args&&... args) ->
-			std::future<std::invoke_result_t<std::decay_t<_Func>, std::decay_t<_Args>...>>
+		template<class Func, class... Args>
+		[[nodiscard]] auto Sumbit(TaskPriority priority, Func&& func, Args&&... args) ->
+			std::future<std::invoke_result_t<std::decay_t<Func>, std::decay_t<Args>...>>
 		{
-			using Result = std::invoke_result_t<std::decay_t<_Func>, std::decay_t<_Args>...>;
+			using Result = std::invoke_result_t<std::decay_t<Func>, std::decay_t<Args>...>;
 
 			std::packaged_task<Result()> task(
-				[func = std::forward<_Func>(func), ... args = std::forward<_Args>(args)]() mutable -> Result
+				[func = std::forward<Func>(func), ... args = std::forward<Args>(args)]() mutable -> Result
 				{
 					return std::invoke(std::move(func), std::move(args)...);
 				}

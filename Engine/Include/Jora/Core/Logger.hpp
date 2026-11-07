@@ -25,9 +25,9 @@ namespace jora
 		Error = 4,
 		Critical = 5,
 
-		_Null = 0 // Используется лишь для проверки (ести ли значение). 
+		Null = 0 // Используется лишь для проверки (ести ли значение). 
 		// Однако, это не значит, что функция MessageInfo::Empty() 
-		// будет выдавать true при MessageType type = MessageType::_Null
+		// будет выдавать true при MessageType type = MessageType::Null
 	};
 
 	/**
@@ -45,7 +45,7 @@ namespace jora
 		case MessageType::Warning:	return "Warning";
 		case MessageType::Error:	return "Error";
 		case MessageType::Critical: return "Critical";
-		[[unlikely]] case MessageType::_Null:	return "";
+		[[unlikely]] case MessageType::Null:	return "";
 		default: std::unreachable(); // Переданы неверные данные.
 		}
 	}

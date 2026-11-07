@@ -1,5 +1,7 @@
 #pragma once
 
+#include <Jora/Graphics/DefaultVulkan.hpp>
+
 struct GLFWwindow;
 
 namespace jora
@@ -49,6 +51,8 @@ namespace jora
 		std::vector<vk::Fence> inFlights; // maxFrames
 		std::vector<vk::Semaphore> imageAvailables; // maxFrames
 		std::vector<vk::Semaphore> renderFinisheds; // vkImages.size();
+
+		VmaAllocator vmaAllocator = nullptr;
 
 		vk::Result Init(GLFWwindow* window) noexcept;
 	};

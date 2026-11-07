@@ -81,6 +81,10 @@ namespace jora
 			vkb::destroy_swapchain(vkbSwapchain);
 		}
 
+		if (vmaAllocator != nullptr) {
+			vmaDestroyAllocator(vmaAllocator);
+		}
+
 		if (vkbDevice.device != nullptr)
 		{
 			vkb::destroy_device(vkbDevice);
@@ -137,8 +141,14 @@ namespace jora
 			.dynamicRendering = true
 		};
 
+		VkPhysicalDeviceVulkan12Features features12 = {
+			.sType = VK_STRUCTURE_TYPE_PHYSICAL_DEVICE_VULKAN_1_3_FEATURES,
+			.bufferDeviceAddress = true
+		};
+
 		const auto physicalDevice = vkb::PhysicalDeviceSelector{ vkbInstance }
 			.set_required_features_13(features13)
+			.set_required_features_12(features12)
 			.set_minimum_version(1, 3)
 			.set_surface(vkSurface)
 			.select();
@@ -159,6 +169,26 @@ namespace jora
 
 		volkLoadDevice(vkbDevice.device);
 		VULKAN_HPP_DEFAULT_DISPATCHER.init(static_cast<vk::Device>(vkbDevice.device));
+
+		VmaVulkanFunctions vmaVulkanFunctions = {
+			.vkGetInstanceProcAddr = VULKAN_HPP_DEFAULT_DISPATCHER.vkGetInstanceProcAddr,
+			.vkGetDeviceProcAddr = VULKAN_HPP_DEFAULT_DISPATCHER.vkGetDeviceProcAddr
+		};
+
+		VmaAllocatorCreateInfo vmaAllocatorCreateInfo = {
+			.flags = VMA_ALLOCATOR_CREATE_BUFFER_DEVICE_ADDRESS_BIT,
+			.physicalDevice = physicalDevice.value().physical_device,
+			.device = vkbDevice.device,
+			.pVulkanFunctions = &vmaVulkanFunctions,
+			.instance = vkbInstance.instance,
+			.vulkanApiVersion = vkbInstance.instance_version
+		};
+
+		if (const auto vmaResult = vmaCreateAllocator(&vmaAllocatorCreateInfo, &vmaAllocator);
+			vmaResult != VK_SUCCESS)
+		{
+			return static_cast<vk::Result>(vmaResult);
+		}
 
 		const auto graphicsQueueResult = vkbDevice.get_queue(vkb::QueueType::graphics);
 		if (!graphicsQueueResult)

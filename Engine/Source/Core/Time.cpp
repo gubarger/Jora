@@ -4,12 +4,14 @@
 namespace jora
 {
 
-	void GlobalTime::View() const noexcept
+	ScopedTimer::~ScopedTimer()
 	{
+		const auto ms = std::chrono::duration<double, std::milli>(
+			std::chrono::steady_clock::now() - start_).count();
+
 		DebugMessenger::Print({
-			.message = "Global time | DeltaTime = " + std::to_string(deltaTime_) +
-			" | Last FPS = " + std::to_string(lastFps_.time_since_epoch().count()) +
-			" | Frame Count = " + std::to_string(frameCount_), .type = MessageType::Info });
+			.message = std::format("{} took {:.3f} ms", loc_.function_name(), ms),
+			.type = MessageType::Info });
 	}
 
 }

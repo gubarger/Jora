@@ -34,17 +34,15 @@ int main() {
 		return static_cast<int>(vk::Result::eErrorInitializationFailed);
 	}
 
-	jora::GlobalTime time;
+	jora::Time time;
+	time.Reset();
 
 	while (!window.WindowCloseCheck())
 	{
+		time.Tick();
+
 		jora::HandlingWindowEvens();
-
-		time.BeginCountFrame();
-
 		render.Record();
-
-		time.EndCountFrame();
 	}
 
 	return 0;

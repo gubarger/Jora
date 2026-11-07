@@ -3,6 +3,9 @@ find_package(vk-bootstrap CONFIG REQUIRED)
 find_package(glfw3 CONFIG REQUIRED)
 find_package(volk CONFIG REQUIRED)
 find_package(glm CONFIG REQUIRED)
+find_package(7zip CONFIG REQUIRED)
+find_package(assimp CONFIG REQUIRED)
+find_package(VulkanMemoryAllocator CONFIG REQUIRED)
 
 add_executable(Jora)
 
@@ -33,10 +36,19 @@ target_link_libraries(Jora
 		vk-bootstrap::vk-bootstrap
 		glfw
 		volk::volk
+		7zip::7zip
+		assimp::assimp
+		glm::glm
+		GPUOpen::VulkanMemoryAllocator
 )
 
 target_compile_definitions(Jora
 	PRIVATE
+		VK_NO_PROTOTYPES
+		VULKAN_HPP_NO_EXCEPTIONS
+		VULKAN_HPP_DISPATCH_LOADER_DYNAMIC=1
+		VMA_STATIC_VULKAN_FUNCTIONS=0
+		VMA_DYNAMIC_VULKAN_FUNCTIONS=1
 		GLM_FORCE_INLINE
 		GLM_FORCE_PURE
 		GLM_FORCE_ALIGNED

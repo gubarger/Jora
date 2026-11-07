@@ -5,6 +5,12 @@
     "vk-bootstrap",
     "volk",
     "gtest",
-    "glm"
+    "glm",
+    "vulkan-memory-allocator",
+    "7zip",
+    {
+      "name": "assimp",
+      "features": [ "draco" ]
+    }
   ]
 }
