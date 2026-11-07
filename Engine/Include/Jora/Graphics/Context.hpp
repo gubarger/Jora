@@ -2,6 +2,8 @@
 
 #include <Jora/Graphics/DefaultVulkan.hpp>
 
+#include <mutex>
+
 struct GLFWwindow;
 
 namespace jora

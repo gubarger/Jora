@@ -115,7 +115,7 @@ namespace jora
 		void Run();
 
 	private:
-		std::mutex mutex_;
+		std::mutex mutex_; // Защищает workers_.
 		std::condition_variable conditionVariable_;
 		bool stop_ = false;
 

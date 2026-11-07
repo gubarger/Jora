@@ -3,6 +3,8 @@
 #include <Jora/Graphics/DefaultVulkan.hpp>
 #include <Jora/Core/SlotMap.hpp>
 
+#include <mutex>
+
 namespace jora
 {
 
@@ -56,12 +58,17 @@ namespace jora
 
 			result.buffer = vk::Buffer{ rawBuffer };
 
+			std::lock_guard lock(mutex_);
 			return buffers_.Emplace(std::move(result));
 		}
 
 		bool Destroy(BufferId id) noexcept
 		{
-			auto removed = buffers_.Erase(id);
+			std::optional<AllocatedBuffer> removed;
+			{
+				std::lock_guard lock(mutex_);
+				removed = buffers_.Erase(id);
+			}
 
 			if (!removed)
 			{
@@ -73,9 +80,18 @@ namespace jora
 			return true;
 		}
 
-		[[nodiscard]] std::expected<AllocatedBuffer*, SlotError> Get(BufferId id) noexcept
+		std::optional<vk::Buffer> GetHandle(BufferId id)
 		{
-			return buffers_.Get(id);
+			std::lock_guard lock(mutex_);
+
+			auto result = buffers_.Get(id);
+
+			if (!result)
+			{
+				return std::nullopt;
+			}
+
+			return (*result)->buffer;
 		}
 
 	private:
@@ -88,6 +104,8 @@ namespace jora
 		}
 
 		VmaAllocator allocator_; // VMA аллокатор.
+
+		std::mutex mutex_; // Защищает buffers_.
 		SlotMap<AllocatedBuffer, BufferTag> buffers_; // Хранимые буфферы по индексу.
 	};
 

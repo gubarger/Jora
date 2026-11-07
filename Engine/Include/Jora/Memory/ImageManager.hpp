@@ -3,6 +3,8 @@
 #include <Jora/Graphics/DefaultVulkan.hpp>
 #include <Jora/Core/SlotMap.hpp>
 
+#include <mutex>
+
 namespace jora
 {
 
@@ -121,12 +123,17 @@ namespace jora
 			result.format = desc.format;
 			result.mipLevels = desc.mipLevels;
 
+			std::lock_guard lock(mutex_);
 			return images_.Emplace(std::move(result));
 		}
 
 		bool Destroy(ImageId id) noexcept
 		{
-			auto removed = images_.Erase(id);
+			std::optional<AllocatedImage> removed;
+			{
+				std::lock_guard lock(mutex_);
+				removed = images_.Erase(id);
+			}
 
 			if (!removed)
 			{
@@ -136,6 +143,20 @@ namespace jora
 			DestroyRaw(*removed);
 
 			return true;
+		}
+
+		std::optional<std::pair<vk::Image, vk::ImageView>> GetHandle(ImageId id)
+		{
+			std::lock_guard lock(mutex_);
+
+			auto result = images_.Get(id);
+
+			if (!result)
+			{
+				return std::nullopt;
+			}
+
+			return { { (*result)->image, (*result)->view } };
 		}
 
 	private:
@@ -166,6 +187,8 @@ namespace jora
 	private:
 		vk::Device device_;
 		VmaAllocator allocator_;
+
+		std::mutex mutex_; // Защищает images_.
 		SlotMap<AllocatedImage, ImageTag> images_;
 	};
 
