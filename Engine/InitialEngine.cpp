@@ -4,9 +4,6 @@
 #include <Jora/Core/Logger.hpp>
 #include <Jora/Core/Time.hpp>
 
-#include <Jora/Memory/BufferManager.hpp>
-#include <Jora/Memory/ImageManager.hpp>
-
 int main() {
 	jora::Window window;
 	jora::Context context;
